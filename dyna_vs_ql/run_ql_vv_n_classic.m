@@ -3,7 +3,7 @@ close all
 
 common_settings_ql
 
-maxU = (1 + sqrt(2 * log(1 + (1 - gamma_vv) + 2) / (1 - gamma_vv)));
+maxU = (1 + sqrt(2 * log(1 + (1 - gamma_vv) + nactions - 2) / (1 - gamma_vv)));
 VVA = zeros(nstates,nactions); % State-action visit value
 
 %% Collect data and learn

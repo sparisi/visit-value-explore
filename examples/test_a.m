@@ -19,7 +19,6 @@ gamma = 0.99;
 gamma_vv = 0.99;
 alpha = 0.1;
 data_type = 1;
-K = 0.99^5 * 2;
 K = 2 / (1 - gamma);
 VCA = zeros(9,4);
 

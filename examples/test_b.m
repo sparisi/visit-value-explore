@@ -19,7 +19,9 @@ gamma = 0.99;
 gamma_vv = 0.99;
 alpha = 0.1;
 data_type = 2; % ALL STATE-ACTION PAIR!
-K = 0.99^5 * 2;
+infinite = true; % TERMINAL VS NON-TERMINAL
+remove_left = true; % REMOVE LEFT FROM FIRST STATE
+
 K = 2 / (1 - gamma);
 VCA = zeros(9,4);
 
@@ -36,20 +38,22 @@ generate_data
 % update count
 for i = 1 : length(sa)
     VCA(sa(i)) = VCA(sa(i)) + 1;
+end 
+
+if infinite
+    D(:) = 0;
 end
 
-% TERMINAL VS NON-TERMINAL
-D(:) = 0;
-
 % REMOVE LEFT FROM FIRST STATE
-VCA(:) = 1;
-VCA(sa(1)) = 0;
-s(1) = [];
-a(1) = [];
-sn(1) = [];
-sa(1) = [];
-D(1) = [];
-R(1) = [];
+if remove_left
+    VCA(sa(1)) = 0;
+    s(1) = [];
+    a(1) = [];
+    sn(1) = [];
+    sa(1) = [];
+    D(1) = [];
+    R(1) = [];
+end
 
 %%
 test_learn

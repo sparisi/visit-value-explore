@@ -3,8 +3,9 @@ close all
 
 common_settings_ql
 
-maxU = (1 + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv);
-VVA = (1 / (1 - gamma_vv) + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv) * ones(nstates,nactions) + 1e-8;
+max_VVA = (1 / (1 - gamma_vv) + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv) + 1e-8;
+maxU = max_VVA * (1 - gamma_vv);
+VVA = max_VVA * ones(nstates,nactions) + 1e-8;
 
 %% Collect data and learn
 while totsteps < budget

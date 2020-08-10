@@ -3,8 +3,9 @@ close all
 
 common_settings_ql
 
-maxU = (1 + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv);
-VVA = (1 / (1 - gamma_vv) + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv) * ones(nstates,nactions) + 1e-8;
+max_VVA = (1 / (1 - gamma_vv) + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv) + 1e-8;
+maxU = max_VVA * (1 - gamma_vv);
+VVA = max_VVA * ones(nstates,nactions) + 1e-8;
 
 %% Collect data and learn
 while totsteps < budget
@@ -33,10 +34,12 @@ while totsteps < budget
         tt = 1 : min(max(totsteps, t), memory_size);
         E_B = r(tt) + gamma * max(QB(sn(tt),:),[],2)' .* ~done(tt) - QB(sa(tt));
         E_T = r(tt) + gamma * max(QT(sn(tt),:),[],2)' .* ~done(tt) - QT(sa(tt));
+
+        % VV-learning
         pseudo_reward = sqrt(2 * bsxfun(@times, log(sum(VCA(s(tt),:), 2))', 1 ./ (VCA(sa(tt)))));
         pseudo_reward = pseudo_reward .* ~done(tt) + pseudo_reward ./ (1 - gamma_vv) .* done(tt);
         E_VV = pseudo_reward + gamma_vv * max(VVA(sn(:,tt),:),[],2)' .* ~done(tt) - VVA(sa(tt));
-
+        
         [xx, yy] = unique(sa(tt));
         for i = xx
             idx = i == sa(tt);

@@ -3,7 +3,7 @@ close all
 
 common_settings_ql
 
-maxU = (1 + sqrt(2 * log(1 + (1 - gamma_vv) + 2) / (1 - gamma_vv)));
+maxU = (1 + sqrt(2 * log(1 + (1 - gamma_vv) + nactions - 2) / (1 - gamma_vv)));
 VVA = zeros(nstates,nactions); % State-action visit value
 
 %% Collect data and learn
@@ -32,9 +32,12 @@ while totsteps < budget
         tt = 1 : min(max(totsteps, t), memory_size);
         E_B = r(tt) + gamma * max(QB(sn(tt),:),[],2)' .* ~done(tt) - QB(sa(tt));
         E_T = r(tt) + gamma * max(QT(sn(tt),:),[],2)' .* ~done(tt) - QT(sa(tt));
+
+        % VV-learning
         pseudo_reward = VCA(sa(tt)) .* ~done(tt) + max(VCA(:)) ./ (1 - gamma_vv) .* done(tt);
         E_VV = pseudo_reward + gamma_vv * min(VVA(sn(tt),:),[],2)' .* ~done(tt) - VVA(sa(tt));
         [xx, yy] = unique(sa(tt));
+
         for i = xx
             idx = i == sa(tt);
             QB(i) = QB(i) + lrate * mean(E_B(idx));

@@ -3,8 +3,9 @@ close all
 
 common_settings_inf
 
-maxU = (1 + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv);
-VVA = (1 / (1 - gamma_vv) + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv) * ones(nstates,nactions) + 1e-8;
+max_VVA = (1 / (1 - gamma_vv) + sqrt(2 * log(nactions - 1))) / (1 - gamma_vv) + 1e-8;
+maxU = max_VVA * (1 - gamma_vv);
+VVA = max_VVA * ones(nstates,nactions) + 1e-8;
 
 %% Collect data and learn
 step = 0;
@@ -38,8 +39,7 @@ while totsteps <= maxsteps
     
     % VV-learning
     pseudo_reward = sqrt(2 * bsxfun(@times, log(sum(VCA(s(t),:), 2))', 1 ./ (VCA(sa(t)))));
-    pseudo_reward = pseudo_reward .* ~done(t) + pseudo_reward ./ (1 - gamma_vv) .* done(t);
-    E_VV = pseudo_reward + gamma_vv * max(VVA(sn(:,t),:),[],2)' .* ~done(t) - VVA(sa(t));
+    E_VV = pseudo_reward + gamma_vv * max(VVA(sn(:,t),:),[],2)' - VVA(sa(t));
     VVA(sa(t)) = VVA(sa(t)) + lrate * E_VV;
     
     % Continue

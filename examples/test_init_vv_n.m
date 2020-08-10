@@ -1,48 +1,22 @@
-VCA = [1 1 0
-    1 1 1
-    1 0 0
-    0 0 0
-    0 0 0
-    0 0 0
-    0 0 0];
+clear all
+n_act = 5;
+qmax = 100;
+gamma_w = 0.99;
+vmin = 0;
+v = vmin * ones(n_act,1);
+q = qmax * ones(n_act,1);
+q(end) = 0;
+n = ones(n_act,1);
+n(end) = 0;
 
-VVA = zeros(size(VCA));
-
-gamma_vv = 0.99;
-s = [1 2, 1 3 2 2];
-sn = [2 5, 3 2 2 3];
-a = [1 2, 2 1 1 3];
-D = [0 1, 0 0 0 0]';
-sa = sub2ind(size(VCA),s,a);
-
-
-for i = 1 : 1000
-    pseudo_reward = sum(VCA(sa),2) .* ~D' + max(sum(VCA,2)) / (1 - gamma_vv) * D';
-    E_VV2 = pseudo_reward + gamma_vv * min(VVA(sn,:),[],2)' .* ~D' - VVA(sa);
-    VVA(sa) = VVA(sa) + lrate * E_VV2;
+for i = 1 : 10000
+r = n(1:end-1);
+e = r + gamma_w * vmin - v(1:end-1);
+e(end+1) = 0;
+v = v + 0.1 * e;
 end
+mean(e.^2)
 
-
-
-%%
-VCA = [1 1 0
-    1 1 1
-    1 1 1
-    1 1 1
-    0 0 0];
-
-VVA = zeros(size(VCA));
-
-gamma_vv = 0.4;
-s = [1 2, 1 3 2 2 3 3 4 4 4];
-sn = [2 5, 3 2 2 3 3 4 4 4 3];
-a = [1 2, 2 1 1 3 2 3 2 3 1];
-D = [0 1, 0 0 0 0 0 0 0 0 0]';
-sa = sub2ind(size(VCA),s,a);
-
-
-for i = 1 : 1000
-    pseudo_reward = sum(VCA(sa),2) .* ~D' + max(sum(VCA,2)) / (1 - gamma_vv) * D';
-    E_VV2 = pseudo_reward + gamma_vv * min(VVA(sn,:),[],2)' .* ~D' - VVA(sa);
-    VVA(sa) = VVA(sa) + lrate * E_VV2;
-end
+max_u = (1 + sqrt(2 * log(1 + (1 - gamma_w) + (n_act-2)) / (1 - gamma_w)));
+ucb = get_ucb(1, v * (1 - gamma_w), qmax, max_u);
+ucb(end) > ucb(1)
