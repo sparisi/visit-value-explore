@@ -26,7 +26,7 @@ for i = 1 : 50000
     E_VV_N = pseudo_reward_n + gamma_vv * min(VVA_N(sn,:),[],2) .* ~D' - VVA_N(sa);
     VVA_N(sa) = VVA_N(sa) + lrate * E_VV_N;
 
-    E_VV_UCB = pseudo_reward_ucb + gamma_vv * max(maxU_vv_ucb - VVA_UCB(sn,:),[],2) - (maxU_vv_ucb - VVA_UCB(sa));
+    E_VV_UCB = pseudo_reward_ucb + gamma_vv * max(maxU_vv_ucb - VVA_UCB(sn,:),[],2) .* ~D' - (maxU_vv_ucb - VVA_UCB(sa));
     VVA_UCB(sa) = VVA_UCB(sa) - lrate * E_VV_UCB;
     
     E = R + gamma * max(Q(sn,:),[],2)' .* ~D - Q(sa)';
