@@ -1,3 +1,5 @@
+% random data is collected
+
 % state indices
 % [ 1 4 7 ]
 % [ 2 5 8 ]

@@ -1,6 +1,7 @@
-% either all pairs have been seen, or only one has not
-% count is uniform (1)
-% can choose between finite and infinite horizon
+% one pair has count 0
+% one has count 1
+% all others have 1/(1-gamma_w)
+% only infinite horizon, since all states already have count = 1/(1-gamma_w)
 
 % state indices
 % [ 1 4 7 ]
@@ -18,13 +19,11 @@
 clear all
 mdp = GridworldSparseVerySmall;
 
-lrate = 0.01;
+lrate = 0.1;
 gamma = 0.99;
 gamma_vv = 0.99;
 alpha = 0.1;
 data_type = 2; % ALL STATE-ACTION PAIR!
-infinite = true; % TERMINAL VS NON-TERMINAL
-remove_left = true; % REMOVE LEFT FROM FIRST STATE
 
 K = 2 / (1 - gamma);
 VCA = zeros(9,4);
@@ -44,20 +43,22 @@ for i = 1 : length(sa)
     VCA(sa(i)) = VCA(sa(i)) + 1;
 end 
 
-if infinite
-    D(:) = 0;
-end
+D(:) = 0;
 
 % REMOVE LEFT FROM FIRST STATE
-if remove_left
-    VCA(sa(1)) = 0;
-    s(1) = [];
-    a(1) = [];
-    sn(1) = [];
-    sa(1) = [];
-    D(1) = [];
-    R(1) = [];
-end
+VCA(:) = 1 / (1 - gamma_vv);
+VCA(sa(1)) = 0;
+VCA(sa(9)) = 1;
+
+% VCA(1,1) = 0;
+% VCA(1,2) = 1;
+
+s(1) = [];
+a(1) = [];
+sn(1) = [];
+sa(1) = [];
+D(1) = [];
+R(1) = [];
 
 %%
 test_learn

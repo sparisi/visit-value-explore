@@ -3,7 +3,8 @@ clear all
 gamma_vv = 0.;
 gamma_vv = 0.01;
 gamma_vv = 0.99;
-vmax = (1/(1-gamma_vv) + sqrt(2*log(4-1))) / (1 - gamma_vv) + 1e-8;
+vmax = (1 / (1 - gamma_vv) + sqrt(2 * log(4-1))) / (1 - gamma_vv) + 1e-8;
+umax = vmax * (1 - gamma_vv);
 VVA = ones(4,3) * vmax;
 s  = [1 2, 1 3 2 2];
 sn = [2 4, 3 2 2 3];
@@ -30,7 +31,8 @@ clear all
 gamma_vv = 0.;
 gamma_vv = 0.0001;
 gamma_vv = 0.99;
-vmax = (1/(1-gamma_vv) + sqrt(2*log(4-1))) / (1 - gamma_vv) + 1e-8;
+vmax = (1 / (1 - gamma_vv) + sqrt(2 * log(4-1))) / (1 - gamma_vv) + 1e-8;
+umax = vmax * (1 - gamma_vv);
 VVA = ones(4,3) * vmax;
 s  = [1 2, 1 3 2 2 3 3 4 4 4];
 sn = [2 4, 3 2 2 3 3 4 4 4 3];
